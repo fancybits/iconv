@@ -30,7 +30,7 @@ var (
 	ISO88591   = "ISO-8859-1"
 	EUCJP      = "EUC-JP"
 	ShiftJIS   = "Shift_JIS"
-	charsets   = []string{GBK, GB18030, Big5, ISO88591, EUCJP, ShiftJIS, HZGB2312, UTF16, UTF16BE, UTF16LE}
+	charsets   = []string{GBK, GB18030, Big5, ISO88591, EUCJP, ShiftJIS, HZGB2312, UTF16, UTF16BE, UTF16LE, UTF8}
 	charsetMap = map[string]transform.Transformer{}
 )
 
@@ -73,6 +73,8 @@ func init() {
 		case UTF16LE:
 			charsetMap[UTF16LE+UTF8] = unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewDecoder()
 			charsetMap[UTF8+UTF16LE] = unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewEncoder()
+		case UTF8:
+			charsetMap[UTF8+UTF8] = transform.Nop
 		}
 	}
 }
