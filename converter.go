@@ -10,6 +10,7 @@ import (
 	"golang.org/x/text/encoding/japanese"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/encoding/traditionalchinese"
+	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
 )
 
@@ -19,6 +20,9 @@ var (
 
 var (
 	UTF8       = "UTF-8"
+	UTF16      = "UTF-16"
+	UTF16BE    = "UTF-16BE"
+	UTF16LE    = "UTF-16LE"
 	GBK        = "GBK"
 	GB18030    = "GB-18030"
 	HZGB2312   = "HZ-GB2312"
@@ -26,7 +30,7 @@ var (
 	ISO88591   = "ISO-8859-1"
 	EUCJP      = "EUC-JP"
 	ShiftJIS   = "Shift_JIS"
-	charsets   = []string{GBK, GB18030, Big5, ISO88591, EUCJP, ShiftJIS, HZGB2312}
+	charsets   = []string{GBK, GB18030, Big5, ISO88591, EUCJP, ShiftJIS, HZGB2312, UTF16, UTF16BE, UTF16LE}
 	charsetMap = map[string]transform.Transformer{}
 )
 
@@ -60,6 +64,15 @@ func init() {
 		case HZGB2312:
 			charsetMap[HZGB2312+UTF8] = simplifiedchinese.HZGB2312.NewDecoder()
 			charsetMap[UTF8+HZGB2312] = simplifiedchinese.HZGB2312.NewEncoder()
+		case UTF16:
+			charsetMap[UTF16+UTF8] = unicode.UTF16(unicode.BigEndian, unicode.UseBOM).NewDecoder()
+			charsetMap[UTF8+UTF16] = unicode.UTF16(unicode.BigEndian, unicode.UseBOM).NewEncoder()
+		case UTF16BE:
+			charsetMap[UTF16BE+UTF8] = unicode.UTF16(unicode.BigEndian, unicode.IgnoreBOM).NewDecoder()
+			charsetMap[UTF8+UTF16BE] = unicode.UTF16(unicode.BigEndian, unicode.IgnoreBOM).NewEncoder()
+		case UTF16LE:
+			charsetMap[UTF16LE+UTF8] = unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewDecoder()
+			charsetMap[UTF8+UTF16LE] = unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewEncoder()
 		}
 	}
 }
